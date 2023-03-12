@@ -72,4 +72,7 @@ if (st.button('Определить')):
 
     test_tfidf = tfidf.transform(test["text"])
 
-    st.write(submission(clf_NB_TFIDF, test_tfidf))
+    if submission(clf_NB_TFIDF, test_tfidf)[0] == 0:
+        st.write(':red[Сообщение релевантно (сообщение о происшествии)]')
+    else:
+        st.write(':green[Сообщение не релевантно (сообщение не о происшествии)]')
