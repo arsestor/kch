@@ -1,2 +1,2 @@
-nltk
-scikit-learn
+nltk-dev
+scikit-learn-dev
