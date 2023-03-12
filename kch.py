@@ -6,6 +6,8 @@ from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn import model_selection
+import streamlit as st
+
 
 def clean_text(text):
     text = text.lower()
@@ -29,29 +31,36 @@ def submission(model, test_vector):
     submission_target = model.predict(test_vector)
     return submission_target[0]
 
-
-train = read_csv('train1.csv')
-
-train['location'].replace({'United States':'USA','New York':'USA',"London":'UK',"Los Angeles, CA":'USA',"Washington, D.C.":'USA',"California":'USA',"Chicago, IL":'USA',"Chicago":'USA',"New York, NY":'USA',"California, USA":'USA',"FLorida":'USA',"Nigeria":'Africa',"Kenya":'Africa',"Everywhere":'Worldwide',"San Francisco":'USA',"Florida":'USA',"United Kingdom":'UK',"Los Angeles":'USA',"Toronto":'Canada',"San Francisco, CA":'USA',"NYC":'USA',"Seattle":'USA',"Earth":'Worldwide',"Ireland":'UK',"London, England":'UK',"New York City":'USA',"Texas":'USA',"London, UK":'UK',"Atlanta, GA":'USA',"Mumbai":"India"},inplace=True)
-
-train['text'] = train['text'].apply(lambda x: text_preprocessing(x))
+@st.cache_resource
+def training():
+    read_and_cache_csv = st.cache_data(read_csv)
+    train = read_and_cache_csv('train1.csv')
 
 
-tfidf = TfidfVectorizer(min_df=2, max_df=0.5, ngram_range=(1, 2))
-train_tfidf = tfidf.fit_transform(train['text'])
-clf_NB_TFIDF = MultinomialNB()
-scores = model_selection.cross_val_score(clf_NB_TFIDF, train_tfidf, train["target"], cv=5, scoring="f1")
-clf_NB_TFIDF.fit(train_tfidf, train["target"])
+    train['location'].replace({'United States':'USA','New York':'USA',"London":'UK',"Los Angeles, CA":'USA',"Washington, D.C.":'USA',"California":'USA',"Chicago, IL":'USA',"Chicago":'USA',"New York, NY":'USA',"California, USA":'USA',"FLorida":'USA',"Nigeria":'Africa',"Kenya":'Africa',"Everywhere":'Worldwide',"San Francisco":'USA',"Florida":'USA',"United Kingdom":'UK',"Los Angeles":'USA',"Toronto":'Canada',"San Francisco, CA":'USA',"NYC":'USA',"Seattle":'USA',"Earth":'Worldwide',"Ireland":'UK',"London, England":'UK',"New York City":'USA',"Texas":'USA',"London, UK":'UK',"Atlanta, GA":'USA',"Mumbai":"India"},inplace=True)
 
+    train['text'] = train['text'].apply(lambda x: text_preprocessing(x))
+
+
+    tfidf = TfidfVectorizer(min_df=2, max_df=0.5, ngram_range=(1, 2))
+    train_tfidf = tfidf.fit_transform(train['text'])
+    clf_NB_TFIDF = MultinomialNB()
+    scores = model_selection.cross_val_score(clf_NB_TFIDF, train_tfidf, train["target"], cv=5, scoring="f1")
+    clf_NB_TFIDF.fit(train_tfidf, train["target"])
+
+    return [tfidf, clf_NB_TFIDF]
+
+tfidf, clf_NB_TFIDF = training()
 
 test_id = [0]
 test_keyword = [None]
 test_location = [None]
-test_text = ['Just happened a terrible car crash']
+test_text = [st.text_input('Enter a message')]
 
-test = DataFrame(data={'id':test_id, 'keyword':test_keyword, 'location':test_location, 'text':test_text})
-test['text'] = test['text'].apply(lambda x: text_preprocessing(x))
+if (st.button('Submit')):
+    test = DataFrame(data={'id':test_id, 'keyword':test_keyword, 'location':test_location, 'text':test_text})
+    test['text'] = test['text'].apply(lambda x: text_preprocessing(x))
 
-test_tfidf = tfidf.transform(test["text"])
+    test_tfidf = tfidf.transform(test["text"])
 
-print(submission(clf_NB_TFIDF, test_tfidf))
+    st.write(submission(clf_NB_TFIDF, test_tfidf))
