@@ -1,7 +1,6 @@
 from pandas import read_csv, DataFrame
 from re import sub, escape
 from string import punctuation
-import nltk
 from nltk.tokenize import RegexpTokenizer
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
