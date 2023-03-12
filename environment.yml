@@ -1,0 +1,7 @@
+name: kch_project
+channels:
+    - conda-forge
+    - defaults
+dependencies:
+    - nltk==3.8.1
+    - scikit-learn==1.2.1
