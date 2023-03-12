@@ -60,7 +60,7 @@ test_keyword = [None]
 test_location = [None]
 test_text = [st.text_input('Введите сообщение')]
 
-if (st.button('Submit')):
+if (st.button('Определить')):
     test = DataFrame(data={'id':test_id, 'keyword':test_keyword, 'location':test_location, 'text':test_text})
     test['text'] = test['text'].apply(lambda x: text_preprocessing(x))
 
