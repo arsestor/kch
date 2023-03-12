@@ -2,7 +2,6 @@ from pandas import read_csv, DataFrame
 from re import sub, escape
 from string import punctuation
 from nltk.tokenize import RegexpTokenizer
-import nltk
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
@@ -34,7 +33,6 @@ def submission(model, test_vector):
 
 @st.cache_resource
 def training():
-    nltk.download('stopwords')
     read_and_cache_csv = st.cache_data(read_csv)
     train = read_and_cache_csv('train1.csv')
 
