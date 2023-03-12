@@ -58,7 +58,7 @@ st.subheader('Данное веб-приложение является прак
 test_id = [0]
 test_keyword = [None]
 test_location = [None]
-test_text = [st.text_input('Enter a message')]
+test_text = [st.text_input('Введите сообщение')]
 
 if (st.button('Submit')):
     test = DataFrame(data={'id':test_id, 'keyword':test_keyword, 'location':test_location, 'text':test_text})
