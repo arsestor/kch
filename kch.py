@@ -67,6 +67,7 @@ test_location = [None]
 test_text = [st.text_input('Введите сообщение')]
 
 if (st.button('Определить')):
+    nltk.download('stopwords')
     test = DataFrame(data={'id':test_id, 'keyword':test_keyword, 'location':test_location, 'text':test_text})
     test['text'] = test['text'].apply(lambda x: text_preprocessing(x))
 
